@@ -13,11 +13,18 @@ const Logout = () => {
   clearUser();
   return <Navigate to="/login" />;
 }
+
+const useAuthenticated = (element : JSX.Element) => {
+  const { isLoggedIn } = useStoreLogin();
+  return (
+    isLoggedIn ? element : <Navigate to="/login" />
+  )
+}
 const AppRoutes = () => {
 
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={useAuthenticated(<Home />)} />
       <Route path="/login" element={<Login />} />
       <Route path="/logout" element={<Logout />} />
       <Route path='/signup' element={<SignUp />}/>
