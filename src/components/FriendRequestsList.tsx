@@ -1,8 +1,9 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 
 type FriendRequest = {
-    id: number;
-    username: string;
+    id: string;
+    senderId: string;
 };
 
 const FriendRequestsList = () => {
@@ -12,17 +13,31 @@ const FriendRequestsList = () => {
     useEffect(() => {
         const fetchFriendRequests = async () => {
             try {
-                const response = await fetch('http://localhost:3000/social/friend-requests/');
-                const data: FriendRequest[] = await response.json();
-                setFriendRequests(data);
-                console.log(friendRequests);
+                const response = await axios.get("http://localhost:3000/social/friend-requests/", {
+                    withCredentials: true
+                });
+                setFriendRequests(response.data);
+                console.log(response.data);
             } catch (error) {
-                console.error("Erreur lors de la récupération des demandes d'amis", error);
+                console.error("Impossible de récupérer les informations de l'utilisateur", error);
             }
         };
 
         fetchFriendRequests();
     }, []);
+
+    const acceptFriendRequest = async (requestId : string) => {
+        try {
+            await axios.post(`http://localhost:3000/social/friend-request/${requestId}/accept`, {}, {
+                withCredentials: true
+            });
+            setFriendRequests((prevRequests) =>
+                prevRequests.filter((request) => request.id !== requestId)
+            );
+        } catch (error) {
+            console.error("Erreur lors de l'acceptation de la demande d'ami", error);
+        }
+    };
 
     return (
         <>
@@ -30,8 +45,9 @@ const FriendRequestsList = () => {
                 {friendRequests.length > 0 ? (
                     friendRequests.map((friendRequest) => (
                         <div key={friendRequest.id}>
-                            <p>Nom d'utilisateur : {friendRequest.username}</p>
-                            <button>Accepter</button>
+                            <p>{friendRequest.senderId}
+                                <button onClick={() => acceptFriendRequest(friendRequest.id)}>Accepter</button>
+                            </p>
                         </div>
                     ))
                 ) : (
