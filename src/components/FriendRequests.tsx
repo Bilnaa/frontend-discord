@@ -3,24 +3,24 @@ import axios from 'axios';
 import {useState} from "react";
 import {v4 as uuidv4} from 'uuid';
 
-type FriendsRequest = {
+type FriendRequests = {
     uuidFriend: string;
 };
 
 const FriendsRequest = () => {
 
-    const {register, handleSubmit, formState: {errors}} = useForm<FriendsRequest>();
+    const {register, handleSubmit, formState: {errors}} = useForm<FriendRequests>();
 
     const [successMessage, setSuccessMessage] = useState('');
     const [messageError, setMessageError] = useState('');
 
 
-    const onSubmit: SubmitHandler<FriendsRequest> = async (data) => {
+    const onSubmit: SubmitHandler<FriendRequests> = async (data) => {
         try {
             const requestId = uuidv4();
             await axios.post(`http://localhost:3000/social/friend-request/${requestId}`, {
-                uuidFriend: data.uuidFriend
-            });
+                receiverId: data.uuidFriend
+            }, {withCredentials : true});
             setMessageError('')
             setSuccessMessage("Votre demande d'ami a bien été envoyée")
 
@@ -44,8 +44,8 @@ const FriendsRequest = () => {
                     })}
                     placeholder="Friend UUID"
                 />
-                {errors.uuidFriend && <p>{errors.uuidFriend.message}</p>}
                 <input value="Ajouter" type="submit"/>
+                {errors.uuidFriend && <p>{errors.uuidFriend.message}</p>}
             </form>
             {successMessage}
             {messageError}
