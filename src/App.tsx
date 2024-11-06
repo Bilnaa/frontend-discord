@@ -1,4 +1,4 @@
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, useLocation } from 'react-router-dom';
 import './App.css';
 import AppRoutes from './utils/routes';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -10,10 +10,17 @@ import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import ToastManager from "./components/ToastManager"
 
-
 function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
+  );
+}
 
-  const {fetchFriendRequests} = useStoreFriendRequests();
+function AppContent() {
+  const location = useLocation();
+  const { fetchFriendRequests } = useStoreFriendRequests();
 
   useEffect(() => {
     console.log('eventSource ouvert')
@@ -32,26 +39,27 @@ function App() {
       console.log('eventSource fermé', eventSource);
     };
   }, []);
+
   return (
-    <Router>
-      <ToastManager/>
+    <>
+      <ToastManager />
       <div className='main'>
-        <nav style={{height:"10vh", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 20px"}}>
+        <nav style={{ height: "10vh", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 20px" }}>
           <a href="/">DiscordRemake</a>
-          <div className="nav-icons">
-            <Link to={'/friends/requests'}>
-              <FontAwesomeIcon icon={faUserGroup} />
-            </Link>
-            <Link to={'/friends'}>
-              <FontAwesomeIcon icon={faUserPlus} />
-            </Link>
-          </div>
+          {location.pathname !== '/login' && location.pathname !== '/signup' && (
+            <div className="nav-icons">
+              <Link to={'/friends/requests'}>
+                <FontAwesomeIcon icon={faUserGroup} />
+              </Link>
+              <Link to={'/friends'}>
+                <FontAwesomeIcon icon={faUserPlus} />
+              </Link>
+            </div>
+          )}
         </nav>
         <AppRoutes />
       </div>
-
-    </Router>
-
+    </>
   );
 }
 
