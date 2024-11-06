@@ -8,12 +8,6 @@ type FriendRequests = {
 };
 
 const styles: { [key: string]: React.CSSProperties } = {
-    container: {
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-    },
     form: {
         display: "flex",
         flexDirection: "column",
@@ -86,9 +80,9 @@ const FriendsRequest = () => {
     };
 
     return (
-        <div style={styles.container}>
-            <h2>Ajout d'ami</h2>
-            <p>
+        <div className="friend-requests-container">
+            <h3>Ajout d'ami</h3>
+            <p className="texte-uuid">
                 Tu peux ajouter des amis grâce à leur identifiant unique (UUID)
             </p>
             <form onSubmit={handleSubmit(onSubmit)} style={styles.form}>

@@ -1,6 +1,8 @@
 import { Routes, Route,Navigate} from 'react-router-dom';
 import Home from '../pages/Home';
 import Chat from '../components/home/Chat';
+import FriendRequests from '../components/FriendRequests'
+
 import Login from '../pages/Login';
 import SignUp from '../pages/SignUp';
 import useStoreLogin from './store/useStoreLogin';
@@ -37,6 +39,8 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/" element={useAuthenticated(<Home />)}>
         <Route path="/chat/:id" element={<Chat />} />
+        <Route path="/friends" element={<FriendRequests />} />
+        <Route path="/friends/requests" element={<FriendRequests />} />
       </Route>
       <Route path="/login" element={<Login />} />
       <Route path="/logout" element={<Logout />} loader={Requestlogout} />
