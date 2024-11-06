@@ -9,49 +9,62 @@ type FormData = {
     confirmPassword: string;
 };
 
-const formStyle: CSSProperties = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "1.5rem",
-    width: "100%",
-    maxWidth: "400px",
-    padding: "2.5rem",
-    backgroundColor: 'rgb(76,53,117)',
-    borderRadius: "12px",
-    boxShadow: "0 8px 16px rgba(0, 0, 0, 0.2)",
-};
-
-const containerStyle: CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '80vh',
-    maxWidth: '90%',
-    paddingLeft: '2vh',
-};
-
-const inputStyle: CSSProperties = {
-    padding: "1rem",
-    fontSize: "1rem",
-    backgroundColor: 'rgb(91,75,138)', // Secondaire
-    border: "none",
-    borderRadius: "8px",
-    color: 'rgb(255,255,255)',
-    outline: 'none',
-    transition: 'all 0.3s ease',
-};
-
-const buttonStyle: CSSProperties = {
-    padding: "1rem",
-    fontSize: "1rem",
-    backgroundColor: 'rgb(120,88,166)',
-    color: "white",
-    border: "none",
-    borderRadius: "8px",
-    cursor: "pointer",
-    transition: "all 0.3s ease",
-    fontWeight: '600',
-    marginTop: '1rem',
+const styles: { [key: string]: CSSProperties } = {
+    container: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+        width: '100%',
+        margin: 0,
+        padding: 0,
+        position: 'absolute',
+        top: 0,
+        left: 0,
+    },
+    form: {
+        display: "flex",
+        flexDirection: "column",
+        gap: "1.5rem",
+        width: "100%",
+        maxWidth: "400px",
+        padding: "2.5rem",
+        backgroundColor: 'rgb(76,53,117)',
+        borderRadius: "12px",
+        boxShadow: "0 8px 16px rgba(0, 0, 0, 0.2)",
+    },
+    input: {
+        padding: "1rem",
+        fontSize: "1rem",
+        backgroundColor: 'rgb(91,75,138)',
+        border: "none",
+        borderRadius: "8px",
+        color: 'rgb(255,255,255)',
+        outline: 'none',
+        transition: 'all 0.3s ease',
+    },
+    button: {
+        padding: "1rem",
+        fontSize: "1rem",
+        backgroundColor: 'rgb(120,88,166)',
+        color: "white",
+        border: "none",
+        borderRadius: "8px",
+        cursor: "pointer",
+        transition: "all 0.3s ease",
+        fontWeight: '600',
+        marginTop: '1rem',
+    },
+    title: {
+        color: "white",
+        marginBottom: "1rem",
+        textAlign: "center",
+    },
+    errorMessage: {
+        color: 'red',
+        fontSize: "0.875rem",
+        marginTop: "0.25rem",
+    }
 };
 
 const SignUp = () => {
@@ -94,32 +107,31 @@ const SignUp = () => {
     };
 
     return (
-        <div style={containerStyle}>
-            <form onSubmit={handleSubmit(onSubmit)} style={formStyle}>
-                <h1 style={{color:"white"}}>Inscription</h1>
+        <div style={styles.container}>
+            <form onSubmit={handleSubmit(onSubmit)} style={styles.form}>
+                <h1 style={styles.title}>Inscription</h1>
                 <input
                     {...register('username', { required: true })}
                     placeholder="Nom d'utilisateur"
-                    style={inputStyle}
+                    style={styles.input}
                 />
-                {errors.username && <span style={{ color: 'red' }}>Veuillez saisir un nom d'utilisateur</span>}
+                {errors.username && <span style={styles.errorMessage}>Veuillez saisir un nom d'utilisateur</span>}
                 <input
                     {...register('password', { required: true })}
                     type="password"
                     placeholder="Mot de passe"
-                    style={inputStyle}
+                    style={styles.input}
                 />
-                {errors.password && <span style={{ color: 'red' }}>Veuillez saisir un mot de passe</span>}
+                {errors.password && <span style={styles.errorMessage}>Veuillez saisir un mot de passe</span>}
                 <input
                     {...register('confirmPassword', { required: true })}
                     type="password"
                     placeholder="Confirmer le mot de passe"
-                    style={inputStyle}
+                    style={styles.input}
                 />
-                {errors.confirmPassword && <span style={{ color: 'red' }}> Merci de confirmer votre mot de passe
-                    </span>}
-                {passwordError && <span style={{ color: 'red' }}>{passwordError}</span>}
-                <button type="submit" style={buttonStyle}>
+                {errors.confirmPassword && <span style={styles.errorMessage}>Merci de confirmer votre mot de passe</span>}
+                {passwordError && <span style={styles.errorMessage}>{passwordError}</span>}
+                <button type="submit" style={styles.button}>
                     Inscription
                 </button>
             </form>

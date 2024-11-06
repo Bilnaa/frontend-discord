@@ -39,9 +39,12 @@ const Logout = () => {
 
 const useAuthenticated = (element: JSX.Element) => {
   const { isLoggedIn } = useStoreLogin();
-  return (
-    isLoggedIn ? element : <Navigate to="/login" />
-  );
+  return isLoggedIn ? element : <Navigate to="/login" />;
+};
+
+const useRedirectIfAuthenticated = (element: JSX.Element) => {
+  const { isLoggedIn } = useStoreLogin();
+  return isLoggedIn ? <Navigate to="/" /> : element;
 };
 
 const AppRoutes = () => {
@@ -52,9 +55,9 @@ const AppRoutes = () => {
         <Route path="/friends" element={<FriendRequests />} />
         <Route path="/friends/requests" element={<FriendRequestsList />} />
       </Route>
-      <Route path="/login" element={<Login />} />
+      <Route path="/login" element={useRedirectIfAuthenticated(<Login />)} />
       <Route path="/logout" element={<Logout />} />
-      <Route path='/signup' element={<SignUp />} />
+      <Route path='/signup' element={useRedirectIfAuthenticated(<SignUp />)} />
       <Route path="*" element={<h1>404 - Page not found</h1>} />
     </Routes>
   );
