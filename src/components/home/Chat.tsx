@@ -21,8 +21,6 @@ function Chat() {
     const {user} = useStoreUser();
     const { messages, setMessage, clearMessage, addMessage } = useMessageStore();
     const currentActiveChat : Friends | undefined= getFriendById(id);
-    const [completeMessage, setcompleteMessage] = useState<Message>({})
-
     
     const {
         handleSubmit,
@@ -30,7 +28,7 @@ function Chat() {
       } = useForm<Input>()
 
       const onSubmit: SubmitHandler<Input> = (data) => {
-        setcompleteMessage(
+        addMessage(
             {
                 id: uuidv4(),
                 emitterId: user?.id,
@@ -38,13 +36,10 @@ function Chat() {
                 content: data.message,
             }
         )
-        addMessage(completeMessage)
 
         const sendMessage = async () => {
-            await axios.post("http://localhost:3000/chat/" + id + "/send", {
-                id: uuidv4(),
+            await axios.post("http://localhost:3000/chat/" + uuidv4() + "/send", {
                 receiverId: id,
-                emitterId: user?.id,
                 content: data.message,
             } , {withCredentials: true })
             .then((response) => {
