@@ -4,11 +4,21 @@ import Login from '../pages/Login';
 import SignUp from '../pages/SignUp';
 import useStoreLogin from './store/useStoreLogin';
 import useStoreUser from './store/useStoreUser';
+import axios from 'axios';
 
-const Logout = () => {
+const Requestlogout = async () => {
+  await axios.post("http://localhost:3000/auth/logout", { withCredentials: true })
+  .then((response) => {
+    console.log(response);
+  })
+  .catch((error) => {
+    console.error("Impossible de se déconnecter", error);
+  });
+};
+
+const Logout =  () => {
   const { logout } = useStoreLogin();
   const { clearUser } = useStoreUser();
-
   logout();
   clearUser();
   return <Navigate to="/login" />;
@@ -26,7 +36,7 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/" element={useAuthenticated(<Home />)} />
       <Route path="/login" element={<Login />} />
-      <Route path="/logout" element={<Logout />} />
+      <Route path="/logout" element={<Logout />} loader={Requestlogout} />
       <Route path='/signup' element={<SignUp />}/>
       <Route path="*" element={<h1>404 - Page not found</h1>} />
     </Routes>
