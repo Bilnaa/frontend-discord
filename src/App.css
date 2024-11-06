@@ -141,3 +141,17 @@ nav a{
   padding: 10px;
   color: black;
 }
+
+.texte-uuid {
+    color: white;
+    margin-top: 10px;
+}
+
+.friend-requests-container{
+    height:100%;
+    width:100%;
+    background-color:rgb(76,53,117,100);
+    display: flex;
+    flex-direction: column;
+
+}

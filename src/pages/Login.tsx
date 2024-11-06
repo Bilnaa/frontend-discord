@@ -16,6 +16,13 @@ const styles: { [key: string]: CSSProperties } = {
     container: {
         display: 'flex',
         alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh', 
+        width: '100%',   
+        margin: 0,      
+        position: 'absolute', 
+        top: 0,        
+        left: 0,
     },
     form: {
         display: "flex",

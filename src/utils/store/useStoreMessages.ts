@@ -3,8 +3,8 @@ import { create } from "zustand";
 export interface Message {
     id: string | undefined;
     emitterId: string | undefined;
+    receiverId: string | undefined;
     content: string;
-    sendAt: string;
 }
 
 interface useMessage{

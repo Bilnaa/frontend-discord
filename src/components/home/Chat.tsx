@@ -3,10 +3,12 @@ import { faMessage } from "@fortawesome/free-solid-svg-icons";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { Friends, useFriendsStore } from "../../utils/store/useStoreFriends";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import { useMessageStore } from "../../utils/store/useStoreMessages";
+import { Message, useMessageStore } from "../../utils/store/useStoreMessages";
 import useStoreUser from "../../utils/store/useStoreUser";
+import { v4 as uuidv4 } from "uuid";
+
 
 type Input = {
     message: string
@@ -14,11 +16,13 @@ type Input = {
 
 function Chat() {
     const { id } = useParams();
+    let rendered = false;
     const {getFriendById} = useFriendsStore();
     const {user} = useStoreUser();
     const { messages, setMessage, clearMessage, addMessage } = useMessageStore();
-    let rendered = false;
     const currentActiveChat : Friends | undefined= getFriendById(id);
+    const [completeMessage, setcompleteMessage] = useState<Message>({})
+
     
     const {
         handleSubmit,
@@ -26,14 +30,31 @@ function Chat() {
       } = useForm<Input>()
 
       const onSubmit: SubmitHandler<Input> = (data) => {
-        // addMessage(
-        //     {
-        //         id: "",
-        //         emitterId: user?.id,
-        //         content: data.message,
-        //         sendAt: ""
-        //     }
-        // )
+        setcompleteMessage(
+            {
+                id: uuidv4(),
+                emitterId: user?.id,
+                receiverId: id,
+                content: data.message,
+            }
+        )
+        addMessage(completeMessage)
+
+        const sendMessage = async () => {
+            await axios.post("http://localhost:3000/chat/" + id + "/send", {
+                id: uuidv4(),
+                receiverId: id,
+                emitterId: user?.id,
+                content: data.message,
+            } , {withCredentials: true })
+            .then((response) => {
+                console.log(response) 
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+        }
+        sendMessage();
         reset()
     }
 
