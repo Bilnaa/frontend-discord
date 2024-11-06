@@ -48,6 +48,7 @@
   width: 100%;
   background-color: black;
   display: flex;
+  overflow-y: scroll;
 }
 
 .chat-container ul{
@@ -57,15 +58,24 @@
 }
 
 
+
 .message-zone li{
   list-style-type: none;
-  text-align: start;
-  width: fit-content;
-  background-color: white;
+}
+
+.message-zone li span{
+  width: max-content;
   padding: 5px 10px;
+  background-color: blue;
   border-radius: 5px;
   overflow: hidden;
   color: rgb(255,255,255,5);
+}
+
+.message-zone ul{
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
 }
 
 
