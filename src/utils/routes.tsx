@@ -1,5 +1,6 @@
 import { Routes, Route,Navigate} from 'react-router-dom';
 import Home from '../pages/Home';
+import Chat from '../components/home/Chat';
 import Login from '../pages/Login';
 import SignUp from '../pages/SignUp';
 import useStoreLogin from './store/useStoreLogin';
@@ -34,7 +35,9 @@ const AppRoutes = () => {
 
   return (
     <Routes>
-      <Route path="/" element={useAuthenticated(<Home />)} />
+      <Route path="/" element={useAuthenticated(<Home />)}>
+        <Route path="/chat/:id" element={<Chat />} />
+      </Route>
       <Route path="/login" element={<Login />} />
       <Route path="/logout" element={<Logout />} loader={Requestlogout} />
       <Route path='/signup' element={<SignUp />}/>
