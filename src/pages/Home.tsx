@@ -1,9 +1,11 @@
+import { Outlet } from "react-router-dom";
+import FriendList from "../components/home/FriendList";
 
 const Home = () => {
   return (
-    <div>
-      <h1>Accueil</h1>
-      <p>Bienvenue sur notre site</p>
+    <div style={{height:"90vh", display:"flex"}}>
+      <FriendList/>
+      <Outlet />
     </div>
   );
 }
