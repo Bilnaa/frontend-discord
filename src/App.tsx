@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import notifSound from "./assets/notifSound.mp3"
 import useStoreFriendRequests from "./utils/store/useStoreFriendRequests";
 import { useEffect } from 'react';
-import { toast } from 'react-toastify';
+import Toast from './components/Toast';
 import ToastManager from "./components/ToastManager"
 
 function App() {
@@ -29,16 +29,22 @@ function AppContent() {
     eventSource.addEventListener('friend-request-received', (event) => {
       new Audio(notifSound).play()
       const data = JSON.parse(event.data);
-      toast("Nouvelle demande d'ami")
+      Toast.notify("Vous avez reçu une demande d'ami")
       fetchFriendRequests()
-      console.log(data);
+      console.log('friend-request-received', data);
+    });
+
+    eventSource.addEventListener('friend-request-accepted', (event) => {
+      const data = JSON.parse(event.data);
+      Toast.notify("Votre demande d'ami a été acceptée")
+      console.log('friend-request-accepted', data);
     });
 
     return () => {
       eventSource.close();
       console.log('eventSource fermé', eventSource);
     };
-  }, []);
+  }, [fetchFriendRequests]);
 
   return (
     <>
