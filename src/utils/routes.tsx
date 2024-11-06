@@ -57,7 +57,7 @@ const AppRoutes = () => {
       </Route>
       <Route path="/login" element={useRedirectIfAuthenticated(<Login />)} />
       <Route path="/logout" element={<Logout />} />
-      <Route path='/signup' element={<SignUp />} />
+      <Route path='/signup' element={useRedirectIfAuthenticated(<SignUp />)} />
       <Route path="*" element={<h1>404 - Page not found</h1>} />
     </Routes>
   );
