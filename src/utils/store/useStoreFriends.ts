@@ -9,7 +9,7 @@ export interface Friends {
 interface useFriends{
     friends: Friends[]
     setFriends : (friends : Friends[]) => void
-    getFriendById : (friendId: string | undefined) => void
+    getFriendById : (friendId: string | undefined) => Friends | undefined
   }
   
   export const useFriendsStore = create<useFriends>((set, get) => ({
