@@ -87,16 +87,17 @@ const Login = () => {
         setErrorMessage("");
         setSuccessMessage("");
         try {
-            const response = await axios.post("http://localhost:3000/auth/login", data);
+            const response = await axios.post("http://localhost:3000/auth/login", data, { withCredentials: true });
             if (response.status !== 201) {
                 throw new Error("Échec de la connexion");
             }
-            setSuccessMessage("Connexion réussie !");
             await axios.get("http://localhost:3000/auth/me", { withCredentials: true }).then((response) => {
                 setUser(response.data);
                 login();
+                setSuccessMessage("Connexion réussie !");
             }).catch((error) => {
                 console.error("Impossible de récupérer les informations de l'utilisateur", error);
+                setErrorMessage("Échec de la connexion. Veuillez vérifier vos identifiants et réessayer.");
                 clearUser();
             });
             setTimeout(() => {
