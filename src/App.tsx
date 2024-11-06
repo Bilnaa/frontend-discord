@@ -9,6 +9,7 @@ import useStoreFriendRequests from "./utils/store/useStoreFriendRequests";
 import { useEffect } from 'react';
 import Toast from './components/Toast';
 import ToastManager from "./components/ToastManager"
+import { useFriendsStore } from "./utils/store/useStoreFriends";
 
 function App() {
   return (
@@ -37,12 +38,14 @@ function AppContent() {
     eventSource.addEventListener('friend-request-accepted', (event) => {
       const data = JSON.parse(event.data);
       Toast.notify("Votre demande d'ami a été acceptée",{type: "info"})
+        const { fetchAllFriends } = useFriendsStore.getState();
+        fetchAllFriends();
       console.log('friend-request-accepted', data);
     });
 
     return () => {
       eventSource.close();
-      console.log('eventSource fermé', eventSource);
+      console.log('eventSource fermé');
     };
   }, [fetchFriendRequests]);
 
