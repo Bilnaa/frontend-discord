@@ -36,7 +36,7 @@ function AppContent() {
 
     eventSource.addEventListener('friend-request-accepted', (event) => {
       const data = JSON.parse(event.data);
-      Toast.notify("Votre demande d'ami a été acceptée")
+      Toast.notify("Votre demande d'ami a été acceptée",{type: "info"})
       console.log('friend-request-accepted', data);
     });
 
