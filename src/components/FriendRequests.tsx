@@ -1,7 +1,11 @@
-import { SubmitHandler, useForm } from "react-hook-form";
+import {SubmitHandler, useForm} from "react-hook-form";
 import axios from "axios";
-import { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
+import {v4 as uuidv4} from "uuid";
+import {toast} from 'react-toastify';
+/*
+import useStoreFriends from "../utils/store/useStoreFriends"
+*/
+
 
 type FriendRequests = {
     uuidFriend: string;
@@ -59,25 +63,37 @@ const styles: { [key: string]: React.CSSProperties } = {
 };
 
 const FriendsRequest = () => {
-    const { register, handleSubmit, formState: { errors } } = useForm<FriendRequests>();
-    const [successMessage, setSuccessMessage] = useState("");
-    const [messageError, setMessageError] = useState("");
+    const {register, handleSubmit, formState: {errors}} = useForm<FriendRequests>();
 
     const onSubmit: SubmitHandler<FriendRequests> = async (data) => {
         try {
             const requestId = uuidv4();
+
+            const response = await axios.get("http://localhost:3000/auth/me", {withCredentials: true});
+            if (response.data.id === data.uuidFriend) {
+                toast("Tu ne peux pas te demander toi-même en ami, petit coquin");
+                return;
+            }
+
+/*            const { getFriendById } = useStoreFriends();
+            console.log(getFriendById(data.uuidFriend))
+            if (getFriendById(data.uuidFriend) != undefined) {
+                toast("Deja ton ami");
+                return;
+            }*/
+
             await axios.post(
                 `http://localhost:3000/social/friend-request/${requestId}`,
-                { receiverId: data.uuidFriend },
-                { withCredentials: true }
+                {receiverId: data.uuidFriend},
+                {withCredentials: true}
             );
-            setMessageError("");
-            setSuccessMessage("Votre demande d'ami a bien été envoyée");
+            toast("Votre demande d'ami a bien été envoyée");
+
         } catch (error) {
-            setSuccessMessage("");
-            setMessageError("Erreur lors de la demande d'ami");
+            toast("Erreur lors de la demande d'ami");
         }
     };
+
 
     return (
         <div className="friend-requests-container">
@@ -104,12 +120,10 @@ const FriendsRequest = () => {
                 <button
                     type="submit"
                     style={styles.button}
-                   >
+                >
                     Ajouter
                 </button>
             </form>
-            {successMessage && <p style={styles.successMessage}>{successMessage}</p>}
-            {messageError && <p style={styles.errorMessage}>{messageError}</p>}
         </div>
     );
 };

@@ -9,6 +9,7 @@ export interface Friends {
 interface useFriends{
     friends: Friends[]
     setFriends : (friends : Friends[]) => void
+    fetchAllFriends : (friends : Friends[]) => void
     getFriendById : (friendId: string | undefined) => void
   }
   
@@ -22,5 +23,10 @@ interface useFriends{
     getFriendById(friendId) {
         if (!friendId) return undefined;
         return get().friends.find(friend => friend.userId === friendId);
+    },
+    fetchAllFriends(friendData) {
+      set({
+        friends: friendData,
+      });
     },
   }))
