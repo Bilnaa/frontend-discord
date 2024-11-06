@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import { CSSProperties, useState } from "react";
 import { useNavigate } from 'react-router-dom';
@@ -9,38 +9,49 @@ type FormData = {
     confirmPassword: string;
 };
 
+const formStyle: CSSProperties = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "1.5rem",
+    width: "100%",
+    maxWidth: "400px",
+    padding: "2.5rem",
+    backgroundColor: 'rgb(76,53,117)',
+    borderRadius: "12px",
+    boxShadow: "0 8px 16px rgba(0, 0, 0, 0.2)",
+};
+
 const containerStyle: CSSProperties = {
     display: 'flex',
-    flexDirection: 'column',
     alignItems: 'center',
-    gap: '20px',
-    padding: '40px',
-    backgroundColor: '#2f3136',
-    borderRadius: '8px',
-    boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
-    maxWidth: '400px',
-    margin: '0 auto'
+    justifyContent: 'center',
+    height: '80vh',
+    maxWidth: '90%',
+    paddingLeft: '2vh',
 };
 
 const inputStyle: CSSProperties = {
-    width: '100%',
-    padding: '12px',
-    borderRadius: '4px',
-    border: '1px solid #202225',
-    backgroundColor: '#40444b',
-    color: 'white',
-    fontSize: '16px'
+    padding: "1rem",
+    fontSize: "1rem",
+    backgroundColor: 'rgb(91,75,138)', // Secondaire
+    border: "none",
+    borderRadius: "8px",
+    color: 'rgb(255,255,255)',
+    outline: 'none',
+    transition: 'all 0.3s ease',
 };
 
 const buttonStyle: CSSProperties = {
-    width: '100%',
-    padding: '12px',
-    backgroundColor: '#5865f2',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    fontSize: '16px',
-    cursor: 'pointer'
+    padding: "1rem",
+    fontSize: "1rem",
+    backgroundColor: 'rgb(120,88,166)',
+    color: "white",
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer",
+    transition: "all 0.3s ease",
+    fontWeight: '600',
+    marginTop: '1rem',
 };
 
 const SignUp = () => {
@@ -70,44 +81,44 @@ const SignUp = () => {
             const response = await axios.post('http://localhost:3000/auth/register', data);
             if (response.status === 201) {
                 navigate('/login');
-            } else {
-                console.error(response.data);
-                setPasswordError("Une erreur s'est produite lors de l'inscription : " + response.data);
             }
         } catch (error) {
             console.error(error);
+            const AxiosError = error as AxiosError;
+            if (AxiosError.response?.status === 409) {
+                setPasswordError("Cet utilisateur existe déjà, veuillez en choisir un autre.");
+            } else {
+                setPasswordError("Une erreur est survenue.");
+            }
         }
     };
 
     return (
         <div style={containerStyle}>
-            <h1>Inscription</h1>
-            <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%' }}>
+            <form onSubmit={handleSubmit(onSubmit)} style={formStyle}>
+                <h1 style={{color:"white"}}>Inscription</h1>
                 <input
                     {...register('username', { required: true })}
-                    placeholder="Username"
+                    placeholder="Nom d'utilisateur"
                     style={inputStyle}
                 />
                 {errors.username && <span style={{ color: 'red' }}>Veuillez saisir un nom d'utilisateur</span>}
-                <div style={{ height: '20px' }} />
                 <input
                     {...register('password', { required: true })}
                     type="password"
-                    placeholder="Password"
+                    placeholder="Mot de passe"
                     style={inputStyle}
                 />
                 {errors.password && <span style={{ color: 'red' }}>Veuillez saisir un mot de passe</span>}
-                <div style={{ height: '20px' }} />
                 <input
                     {...register('confirmPassword', { required: true })}
                     type="password"
-                    placeholder="Confirm Password"
+                    placeholder="Confirmer le mot de passe"
                     style={inputStyle}
                 />
                 {errors.confirmPassword && <span style={{ color: 'red' }}> Merci de confirmer votre mot de passe
                     </span>}
                 {passwordError && <span style={{ color: 'red' }}>{passwordError}</span>}
-                <div style={{ height: '20px' }} />
                 <button type="submit" style={buttonStyle}>
                     Inscription
                 </button>
