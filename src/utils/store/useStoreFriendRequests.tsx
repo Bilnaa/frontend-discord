@@ -37,10 +37,7 @@ const useStoreFriendRequests = create<FriendRequestsState>((set) => ({
                 friendRequests: state.friendRequests.filter((request) => request.id !== requestId),
             }));
           const { fetchAllFriends } = useFriendsStore.getState();
-          const friendsResponse = await axios.get("http://localhost:3000/social/friends", {
-            withCredentials: true,
-          });
-          fetchAllFriends(friendsResponse.data);
+          fetchAllFriends();
 
         } catch (error) {
             console.error("Erreur lors de l'acceptation de la demande d'ami", error);

@@ -1,7 +1,7 @@
 import axios, { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import { CSSProperties, useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import {Link, useNavigate } from 'react-router-dom';
 
 type FormData = {
     username: string;
@@ -134,6 +134,11 @@ const SignUp = () => {
                 <button type="submit" style={styles.button}>
                     Inscription
                 </button>
+                <Link
+                    to="/login"
+                >
+                    Déjà un compte ? Connectez-vous
+                </Link>
             </form>
         </div>
     );

@@ -2,9 +2,8 @@ import {SubmitHandler, useForm} from "react-hook-form";
 import axios from "axios";
 import {v4 as uuidv4} from "uuid";
 import {toast} from 'react-toastify';
-/*
-import useStoreFriends from "../utils/store/useStoreFriends"
-*/
+import {useFriendsStore} from "../utils/store/useStoreFriends"
+import {useEffect} from "react";
 
 
 type FriendRequests = {
@@ -22,6 +21,7 @@ const styles: { [key: string]: React.CSSProperties } = {
         backgroundColor: "#4c3575",
         borderRadius: "12px",
         boxShadow: "0 8px 16px rgba(0, 0, 0, 0.2)",
+        marginTop: "1em",
     },
     inputGroup: {
         display: "flex",
@@ -64,23 +64,26 @@ const styles: { [key: string]: React.CSSProperties } = {
 
 const FriendsRequest = () => {
     const {register, handleSubmit, formState: {errors}} = useForm<FriendRequests>();
+    const {friends, fetchAllFriends} = useFriendsStore();
+
+    useEffect(() => {
+        fetchAllFriends();
+    }, [fetchAllFriends]);
 
     const onSubmit: SubmitHandler<FriendRequests> = async (data) => {
         try {
             const requestId = uuidv4();
-
             const response = await axios.get("http://localhost:3000/auth/me", {withCredentials: true});
             if (response.data.id === data.uuidFriend) {
                 toast("Tu ne peux pas te demander toi-même en ami, petit coquin");
                 return;
             }
 
-/*            const { getFriendById } = useStoreFriends();
-            console.log(getFriendById(data.uuidFriend))
-            if (getFriendById(data.uuidFriend) != undefined) {
-                toast("Deja ton ami");
+            if (friends.some(friend => friend.userId === data.uuidFriend)) {
+                console.log('friends', friends)
+                toast("Déjà ton ami");
                 return;
-            }*/
+            }
 
             await axios.post(
                 `http://localhost:3000/social/friend-request/${requestId}`,

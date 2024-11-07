@@ -1,3 +1,4 @@
+import axios from "axios";
 import { create } from "zustand";
 
 export interface Friends {
@@ -9,7 +10,7 @@ export interface Friends {
 interface useFriends{
     friends: Friends[]
     setFriends : (friends : Friends[]) => void
-    fetchAllFriends : (friends : Friends[]) => void
+    fetchAllFriends : () => void
     getFriendById : (friendId: string | undefined) => void
   }
   
@@ -24,9 +25,13 @@ interface useFriends{
         if (!friendId) return undefined;
         return get().friends.find(friend => friend.userId === friendId);
     },
-    fetchAllFriends(friendData) {
-      set({
-        friends: friendData,
-      });
-    },
+      fetchAllFriends: async () => {
+          try {
+              const response = await axios.get("http://localhost:3000/social/friends", { withCredentials: true });
+              console.log("Amis récupérés :", response.data);
+              set({ friends: response.data });
+          } catch (error) {
+              console.error("Erreur lors du chargement des amis :", error);
+          }
+      }
   }))
