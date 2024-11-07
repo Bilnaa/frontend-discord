@@ -11,6 +11,7 @@ import Toast from './components/Toast';
 import ToastManager from "./components/ToastManager"
 import {Friends, useFriendsStore} from "./utils/store/useStoreFriends";
 import { Message, useMessageStore } from './utils/store/useStoreMessages';
+import { toast } from 'react-toastify';
 
 function App() {
     return (
@@ -36,11 +37,17 @@ function AppContent() {
         eventSource.addEventListener('message-received', (event) => {
             const data : Message = JSON.parse(event.data);
             const friendMessage : Friends | undefined = getFriendById(data.emitterId);
-            console.log(id, data.emitterId);
+            const messageToast = () => (
+              <div>
+               <h2>{friendMessage?.username}</h2>
+               <p>{data.content}</p>
+              </div>
+            )
             
             if (id != data.emitterId) {
               new Audio(notifSound).play()
-              Toast.notify("Vous avez reçu un nouveau message de " + friendMessage?.username);
+              toast(messageToast)
+              //Toast.notify("Vous avez reçu un nouveau message de " + friendMessage?.username);
             }
             addMessage(data);
         });

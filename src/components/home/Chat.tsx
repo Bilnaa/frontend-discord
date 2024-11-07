@@ -3,7 +3,7 @@ import { faMessage } from "@fortawesome/free-solid-svg-icons";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { Friends, useFriendsStore } from "../../utils/store/useStoreFriends";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import axios from "axios";
 import { Message, useMessageStore } from "../../utils/store/useStoreMessages";
 import useStoreUser from "../../utils/store/useStoreUser";
@@ -20,6 +20,7 @@ function Chat() {
     const { user } = useStoreUser();
     const { messages, setMessage, clearMessage, addMessage } = useMessageStore();
     const currentActiveChat: Friends | undefined = getFriendById(id);
+    const messageEndRef = useRef<HTMLDivElement>(null); // Reference to the bottom of message list
 
     const { handleSubmit, register, reset } = useForm<Input>();
 
@@ -64,39 +65,49 @@ function Chat() {
             fetchMessages();
             rendered = true;
         }
-    }, [id, messages]);
-    
+    }, [id]);
+
+    // Scroll to the bottom whenever messages change
+    useEffect(() => {
+        if (messageEndRef.current) {
+            messageEndRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [messages]);
 
     return (
         <div className="chat-container">
             <h3>{currentActiveChat?.username}</h3>
-            <ul className="message-zone">
-                {messages.map((message) => {
-                    if (message.emitterId === id) {
-                        return (
-                            <li
-                                style={{ display: "flex", justifyContent: "start" }}
-                                key={message.id}
-                            >
-                                <span style={{ backgroundColor: "rgb(91,75,138,100)" }}>
-                                    {message.content}
-                                </span>
-                            </li>
-                        );
-                    } else {
-                        return (
-                            <li
-                                style={{ display: "flex", justifyContent: "end" }}
-                                key={message.id}
-                            >
-                                <span style={{ backgroundColor: "rgb(91,75,138,100)" }}>
-                                    {message.content}
-                                </span>
-                            </li>
-                        );
-                    }
-                })}
-            </ul>
+            <div className="message-zone" style={{ overflowY: 'scroll' }}>
+                <ul>
+                    {messages.map((message) => {
+                        if (message.emitterId === id) {
+                            return (
+                                <li
+                                    style={{ display: "flex", justifyContent: "start" }}
+                                    key={message.id}
+                                >
+                                    <span style={{ backgroundColor: "rgb(91,75,138,100)" }}>
+                                        {message.content}
+                                    </span>
+                                </li>
+                            );
+                        } else {
+                            return (
+                                <li
+                                    style={{ display: "flex", justifyContent: "end" }}
+                                    key={message.id}
+                                >
+                                    <span style={{ backgroundColor: "rgb(91,75,138,100)" }}>
+                                        {message.content}
+                                    </span>
+                                </li>
+                            );
+                        }
+                    })}
+                    {/* Invisible div to scroll into view */}
+                    <div ref={messageEndRef} />
+                </ul>
+            </div>
             <div className="inputs">
                 <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex" }}>
                     <input
