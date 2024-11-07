@@ -13,6 +13,16 @@ type Input = {
     message: string;
 };
 
+function makeLinksClickable(text: string) {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    return text.split(urlRegex).map((part, index) => {
+        if (part.match(urlRegex)) {
+            return <a key={index} href={part} target="_blank" rel="noopener noreferrer">{part}</a>;
+        }
+        return part;
+    });
+}
+
 function Chat() {
     const { id } = useParams();
     let rendered = false;
@@ -79,7 +89,7 @@ function Chat() {
                                 key={message.id}
                             >
                                 <span style={{ backgroundColor: "rgb(91,75,138,100)" }}>
-                                    {message.content}
+                                    {makeLinksClickable(message.content)}
                                 </span>
                             </li>
                         );
@@ -90,7 +100,7 @@ function Chat() {
                                 key={message.id}
                             >
                                 <span style={{ backgroundColor: "rgb(91,75,138,100)" }}>
-                                    {message.content}
+                                    {makeLinksClickable(message.content)}
                                 </span>
                             </li>
                         );
