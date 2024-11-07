@@ -17,7 +17,6 @@ function FriendList() {
         console.error(error);
       });
     };
-    
     if (rendered == false) {
       fetchFriends();
       rendered = true;

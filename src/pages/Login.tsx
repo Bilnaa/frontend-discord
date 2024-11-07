@@ -3,7 +3,7 @@ import axios from "axios";
 import { useForm } from "react-hook-form";
 import { CSSProperties } from "react";
 import useStoreLogin from "../utils/store/useStoreLogin";
-import { useNavigate } from 'react-router-dom';
+import {Link, useNavigate } from 'react-router-dom';
 import useStoreUser from "../utils/store/useStoreUser";
 
 
@@ -127,7 +127,7 @@ const Login = () => {
                     <label style={styles.label}>Nom d'utilisateur</label>
                     <input
                         type="text"
-                        {...register("username", { required: "Le nom d'utilisateur est requis" })}
+                        {...register("username", {required: "Le nom d'utilisateur est requis"})}
                         style={styles.input}
                         placeholder="Entrez votre nom d'utilisateur"
                     />
@@ -137,7 +137,7 @@ const Login = () => {
                     <label style={styles.label}>Mot de passe</label>
                     <input
                         type="password"
-                        {...register("password", { required: "Le mot de passe est requis" })}
+                        {...register("password", {required: "Le mot de passe est requis"})}
                         style={styles.input}
                         placeholder="Entrez votre mot de passe"
                     />
@@ -154,6 +154,12 @@ const Login = () => {
                 </button>
                 {errorMessage && <p style={styles.errorMessage}>{errorMessage}</p>}
                 {successMessage && <p style={styles.successMessage}>{successMessage}</p>}
+
+                <Link
+                    to="/signup"
+                >
+                    Pas de compte ? Inscrivez-vous
+                </Link>
             </form>
         </div>
     );
