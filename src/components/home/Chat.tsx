@@ -3,7 +3,7 @@ import { faMessage } from "@fortawesome/free-solid-svg-icons";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { Friends, useFriendsStore } from "../../utils/store/useStoreFriends";
-import { useEffect, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { Message, useMessageStore } from "../../utils/store/useStoreMessages";
 import useStoreUser from "../../utils/store/useStoreUser";
@@ -13,6 +13,16 @@ type Input = {
     message: string;
 };
 
+function makeLinksClickable(text: string) {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    return text.split(urlRegex).map((part, index) => {
+        if (part.match(urlRegex)) {
+            return <a key={index} href={part} target="_blank" rel="noopener noreferrer">{part}</a>;
+        }
+        return part;
+    });
+}
+
 function Chat() {
     const { id } = useParams();
     let rendered = false;
@@ -20,13 +30,27 @@ function Chat() {
     const { user } = useStoreUser();
     const { messages, setMessage, clearMessage, addMessage } = useMessageStore();
     const currentActiveChat: Friends | undefined = getFriendById(id);
-    const messageEndRef = useRef<HTMLDivElement>(null); // Reference to the bottom of message list
+    const [charCount, setCharCount] = useState(0);
+    const { handleSubmit, register, reset, watch } = useForm<Input>();
+    const messageValue = watch("message", "")
+    const messageEndRef = useRef<HTMLDivElement>(null);
 
-    const { handleSubmit, register, reset } = useForm<Input>();
+    const fetchMessages = async () => {
+        await axios.get("http://localhost:3000/messages/" + id, { withCredentials: true })
+            .then((response) => {
+                clearMessage();
+                setMessage(response.data.slice().reverse());
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    };
+
 
     const onSubmit: SubmitHandler<Input> = (data) => {
+        const idForMessage : string = uuidv4();
         addMessage({
-            id: uuidv4(),
+            id: idForMessage,
             emitterId: user?.id,
             receiverId: id,
             content: data.message,
@@ -34,7 +58,7 @@ function Chat() {
 
         const sendMessage = async () => {
             await axios
-                .post("http://localhost:3000/chat/" + uuidv4() + "/send", {
+                .post("http://localhost:3000/chat/" + idForMessage + "/send", {
                     receiverId: id,
                     content: data.message,
                 }, { withCredentials: true })
@@ -47,32 +71,27 @@ function Chat() {
         };
         sendMessage();
         reset();
+        setCharCount(0);
     };
 
     useEffect(() => {
-        const fetchMessages = async () => {
-            await axios.get("http://localhost:3000/messages/" + id, { withCredentials: true })
-                .then((response) => {
-                    clearMessage();
-                    setMessage(response.data.slice().reverse());
-                })
-                .catch((error) => {
-                    console.error(error);
-                });
-        };
-
+        fetchMessages();
         if (!rendered) {
             fetchMessages();
             rendered = true;
         }
     }, [id]);
 
-    // Scroll to the bottom whenever messages change
     useEffect(() => {
         if (messageEndRef.current) {
             messageEndRef.current.scrollIntoView({ behavior: "smooth" });
+            console.log("scroll");
         }
     }, [messages]);
+    
+    useEffect(() => {
+        setCharCount(messageValue.length);
+    }, [messageValue]);
 
     return (
         <div className="chat-container">
@@ -87,24 +106,23 @@ function Chat() {
                                     key={message.id}
                                 >
                                     <span style={{ backgroundColor: "rgb(91,75,138,100)" }}>
-                                        {message.content}
+                                    {makeLinksClickable(message.content)}
                                     </span>
                                 </li>
                             );
                         } else {
                             return (
                                 <li
-                                    style={{ display: "flex", justifyContent: "end" }}
+                                    style={{ display: "flex", justifyContent: "end", paddingRight:"10px" }}
                                     key={message.id}
                                 >
-                                    <span style={{ backgroundColor: "rgb(91,75,138,100)" }}>
-                                        {message.content}
+                                    <span style={{ backgroundColor: "rgb(120,88,166,100)" }}>
+                                    {makeLinksClickable(message.content)}
                                     </span>
                                 </li>
                             );
                         }
                     })}
-                    {/* Invisible div to scroll into view */}
                     <div ref={messageEndRef} />
                 </ul>
             </div>
@@ -115,11 +133,19 @@ function Chat() {
                         autoComplete="off"
                         type="text"
                         placeholder="Tap your message here"
-                        style={{ fontSize: "20px" }}
-                        {...register("message")}
+                        style={{fontSize: "20px"}}
+                        {...register("message", {
+                            maxLength: {
+                                value: 255,
+                                message: "255 caractères maximum chef",
+                            },
+                        })}
                     />
+                    <p style={{fontSize: "14px", color: charCount > 255 ? "red" : "black"}}>
+                        {charCount} / 255 caractères
+                    </p>
                     <button className="message-button" type="submit">
-                        <FontAwesomeIcon icon={faMessage} />
+                        <FontAwesomeIcon icon={faMessage}/>
                     </button>
                 </form>
             </div>

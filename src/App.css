@@ -47,7 +47,6 @@
   height: 100%;
   width: 100%;
   display: flex;
-  overflow-y: scroll;
 }
 
 .chat-container ul{
@@ -65,7 +64,8 @@
 }
 
 .message-zone li span{
-  width: max-content;
+  max-width: 50%;
+  text-align: start;
   padding: 5px 10px;
   border-radius: 5px;
   overflow: hidden;
@@ -73,7 +73,7 @@
 }
 
 .message-zone ul{
-  overflow: hidden;
+  overflow-x: hidden;
   width: 100%;
   height: 100%;
 }

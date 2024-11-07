@@ -1,4 +1,4 @@
-import {BrowserRouter as Router, useLocation, useParams} from 'react-router-dom';
+import {BrowserRouter as Router, useLocation} from 'react-router-dom';
 import './App.css';
 import AppRoutes from './utils/routes';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -27,7 +27,7 @@ function AppContent() {
     const id = url.split("/").pop();
     const {fetchFriendRequests} = useStoreFriendRequests();
     const { addMessage } = useMessageStore();
-    const { getFriendById } = useFriendsStore();
+    const { getFriendById, fetchAllFriends } = useFriendsStore();
 
 
     useEffect(() => {
@@ -40,14 +40,13 @@ function AppContent() {
             const messageToast = () => (
               <div>
                <h2>{friendMessage?.username}</h2>
-               <p>{data.content}</p>
+               <p style={{textOverflow:"ellipsis", maxWidth:"300px"}}>{data.content}</p>
               </div>
             )
             
             if (id != data.emitterId) {
               new Audio(notifSound).play()
               toast(messageToast)
-              //Toast.notify("Vous avez reçu un nouveau message de " + friendMessage?.username);
             }
             addMessage(data);
         });
@@ -63,7 +62,6 @@ function AppContent() {
         eventSource.addEventListener('friend-request-accepted', (event) => {
             const data = JSON.parse(event.data);
             Toast.notify("Votre demande d'ami a été acceptée", {type: "info"})
-            const {fetchAllFriends} = useFriendsStore.getState();
             fetchAllFriends();
             console.log('friend-request-accepted', data);
         });
