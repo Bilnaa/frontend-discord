@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Friends, useFriendsStore } from "../../utils/store/useStoreFriends";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -17,7 +17,6 @@ function FriendList() {
         console.error(error);
       });
     };
-    
     if (rendered == false) {
       fetchFriends();
       rendered = true;

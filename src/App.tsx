@@ -1,4 +1,4 @@
-import {BrowserRouter as Router, useLocation} from 'react-router-dom';
+import {BrowserRouter as Router, useLocation, useParams} from 'react-router-dom';
 import './App.css';
 import AppRoutes from './utils/routes';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -9,7 +9,8 @@ import useStoreFriendRequests from "./utils/store/useStoreFriendRequests";
 import {useEffect} from 'react';
 import Toast from './components/Toast';
 import ToastManager from "./components/ToastManager"
-import {useFriendsStore} from "./utils/store/useStoreFriends";
+import {Friends, useFriendsStore} from "./utils/store/useStoreFriends";
+import { Message, useMessageStore } from './utils/store/useStoreMessages';
 
 function App() {
     return (
@@ -21,11 +22,28 @@ function App() {
 
 function AppContent() {
     const location = useLocation();
+    const url = window.location.href;
+    const id = url.split("/").pop();
     const {fetchFriendRequests} = useStoreFriendRequests();
+    const { addMessage } = useMessageStore();
+    const { getFriendById } = useFriendsStore();
+
 
     useEffect(() => {
-        console.log('eventSource ouvert')
         const eventSource = new EventSource('http://localhost:3000/notifications', {withCredentials: true});
+        const messageEventSource = new EventSource('http://localhost:3000/notifications', {withCredentials: true});
+
+        eventSource.addEventListener('message-received', (event) => {
+            const data : Message = JSON.parse(event.data);
+            const friendMessage : Friends | undefined = getFriendById(data.emitterId);
+            console.log(id, data.emitterId);
+            
+            if (id != data.emitterId) {
+              new Audio(notifSound).play()
+              Toast.notify("Vous avez reçu un nouveau message de " + friendMessage?.username);
+            }
+            addMessage(data);
+        });
 
         eventSource.addEventListener('friend-request-received', (event) => {
             new Audio(notifSound).play()
@@ -44,10 +62,11 @@ function AppContent() {
         });
 
         return () => {
+            messageEventSource.close();
             eventSource.close();
             console.log('eventSource fermé');
         };
-    }, [fetchFriendRequests]);
+    }, [fetchFriendRequests, addMessage]);
 
     return (
         <>
