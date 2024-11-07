@@ -3,7 +3,7 @@ import { faMessage } from "@fortawesome/free-solid-svg-icons";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { Friends, useFriendsStore } from "../../utils/store/useStoreFriends";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { Message, useMessageStore } from "../../utils/store/useStoreMessages";
 import useStoreUser from "../../utils/store/useStoreUser";
@@ -30,8 +30,9 @@ function Chat() {
     const { user } = useStoreUser();
     const { messages, setMessage, clearMessage, addMessage } = useMessageStore();
     const currentActiveChat: Friends | undefined = getFriendById(id);
-
-    const { handleSubmit, register, reset } = useForm<Input>();
+    const [charCount, setCharCount] = useState(0);
+    const { handleSubmit, register, reset, watch } = useForm<Input>();
+    const messageValue = watch("message", "")
 
     const onSubmit: SubmitHandler<Input> = (data) => {
         addMessage({
@@ -56,6 +57,7 @@ function Chat() {
         };
         sendMessage();
         reset();
+        setCharCount(0);
     };
 
     useEffect(() => {
@@ -75,7 +77,9 @@ function Chat() {
             rendered = true;
         }
     }, [id, messages]);
-    
+    useEffect(() => {
+        setCharCount(messageValue.length);
+    }, [messageValue]);
 
     return (
         <div className="chat-container">
@@ -114,11 +118,19 @@ function Chat() {
                         autoComplete="off"
                         type="text"
                         placeholder="Tap your message here"
-                        style={{ fontSize: "20px" }}
-                        {...register("message")}
+                        style={{fontSize: "20px"}}
+                        {...register("message", {
+                            maxLength: {
+                                value: 255,
+                                message: "255 caractères maximum chef",
+                            },
+                        })}
                     />
+                    <p style={{fontSize: "14px", color: charCount > 255 ? "red" : "black"}}>
+                        {charCount} / 255 caractères
+                    </p>
                     <button className="message-button" type="submit">
-                        <FontAwesomeIcon icon={faMessage} />
+                        <FontAwesomeIcon icon={faMessage}/>
                     </button>
                 </form>
             </div>
