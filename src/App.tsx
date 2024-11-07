@@ -30,7 +30,6 @@ function AppContent() {
 
 
     useEffect(() => {
-        console.log('eventSource ouvert')
         const eventSource = new EventSource('http://localhost:3000/notifications', {withCredentials: true});
         const messageEventSource = new EventSource('http://localhost:3000/notifications', {withCredentials: true});
 
