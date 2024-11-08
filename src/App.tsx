@@ -2,7 +2,7 @@ import {BrowserRouter as Router, useLocation} from 'react-router-dom';
 import './App.css';
 import AppRoutes from './utils/routes';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faUserGroup, faUserPlus, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import {faUserGroup, faUserPlus, faRightFromBracket, faCopy } from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";
 import notifSound from "./assets/notifSound.mp3"
 import useStoreFriendRequests from "./utils/store/useStoreFriendRequests";
@@ -12,6 +12,7 @@ import ToastManager from "./components/ToastManager"
 import {Friends, useFriendsStore} from "./utils/store/useStoreFriends";
 import { Message, useMessageStore} from './utils/store/useStoreMessages';
 import { toast } from 'react-toastify';
+import useStoreUser from './utils/store/useStoreUser';
 
 function App() {
     return (
@@ -26,6 +27,7 @@ function AppContent() {
     const url = window.location.href;
     const id = url.split("/").pop();
     const {fetchFriendRequests} = useStoreFriendRequests();
+    const {user} = useStoreUser();
     const { addMessage} = useMessageStore();
     const { getFriendById, fetchAllFriends } = useFriendsStore();
 
@@ -69,6 +71,11 @@ function AppContent() {
         };
     }, [fetchAllFriends,getFriendById,fetchFriendRequests, addMessage, id]);
 
+    function copyMyIdToClipboard() {
+      navigator.clipboard.writeText(user?.id);
+      Toast.notify("Identifiant copié", {type: "info"});
+    }
+
     return (
         <>
             <ToastManager/>
@@ -77,6 +84,9 @@ function AppContent() {
                     <a href="/">DiscordRemake</a>
                     {location.pathname !== '/login' && location.pathname !== '/signup' && (
                         <div className="nav-icons">
+                            <a onClick={copyMyIdToClipboard} style={{cursor:"pointer"}}>
+                              <FontAwesomeIcon icon={faCopy} />
+                            </a>
                             <Link to={'/friends/requests'}>
                                 <FontAwesomeIcon icon={faUserGroup} />
                             </Link>
