@@ -54,14 +54,14 @@ export const useMessageStore = create<useMessage>((set) => ({
                         content: message.content,
                     }, { withCredentials: true });
                     set((state) => ({
-                        messages: [...state.messages, message],
+                        messages: state.messages.some((msg) => msg.id === message.id) ? state.messages : [...state.messages, message],
                         failedMessages: state.failedMessages.filter((msg) => msg.id !== message.id),
                     }));
                 } catch (error) {
                     console.error("Failed to resend message", error);
                 }
             });
-            return { failedMessages: newFailedMessages };
+            return { failedMessages: [] };
         });
     },
     retryFailedMessage(messageId) {
@@ -74,7 +74,7 @@ export const useMessageStore = create<useMessage>((set) => ({
                 }, { withCredentials: true })
                 .then(() => {
                     set((state) => ({
-                        messages: [...state.messages, message],
+                        messages: state.messages.some((msg) => msg.id === message.id) ? state.messages : [...state.messages, message],
                         failedMessages: state.failedMessages.filter((msg) => msg.id !== messageId),
                     }));
                 })

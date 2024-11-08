@@ -35,6 +35,9 @@ function Chat() {
     const messageEndRef = useRef<HTMLDivElement>(null);
 
     const onSubmit: SubmitHandler<Input> = (data) => {
+        if (!data.message.trim()) {
+            return; // Ne pas envoyer de message vide
+        }
         const idForMessage: string = uuidv4();
         const newMessage = {
             id: idForMessage,
