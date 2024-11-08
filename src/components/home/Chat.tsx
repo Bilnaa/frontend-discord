@@ -38,6 +38,8 @@ function Chat() {
 
 
     const onSubmit: SubmitHandler<Input> = (data) => {
+        console.log(data.message);
+        
         const idForMessage : string = uuidv4();
         addMessage({
             id: idForMessage,
@@ -128,6 +130,7 @@ function Chat() {
                     <input
                         className="message-bar"
                         autoComplete="off"
+                        required
                         type="text"
                         placeholder="Tap your message here"
                         style={{fontSize: "20px"}}

@@ -19,9 +19,18 @@
   }
 }
 
+a{
+  text-decoration: none;
+}
+
 
 .read-the-docs {
   color: #888;
+}
+
+.notif{
+  line-clamp: 1;
+  -webkit-line-clamp: 1;
 }
 
 .chat-container{
