@@ -73,29 +73,23 @@ function AppContent() {
         <>
             <ToastManager/>
             <div className='main'>
-                <nav style={{
-                    height: "10vh",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    padding: "0 20px"
-                }}>
+                <nav>
                     <a href="/">DiscordRemake</a>
                     {location.pathname !== '/login' && location.pathname !== '/signup' && (
                         <div className="nav-icons">
                             <Link to={'/friends/requests'}>
-                                <FontAwesomeIcon icon={faUserGroup}/>
+                                <FontAwesomeIcon icon={faUserGroup} />
                             </Link>
                             <Link to={'/friends'}>
-                                <FontAwesomeIcon icon={faUserPlus}/>
+                                <FontAwesomeIcon icon={faUserPlus} />
                             </Link>
                             <Link to={'/logout'}>
-                                <FontAwesomeIcon icon={faRightFromBracket }/>
+                                <FontAwesomeIcon icon={faRightFromBracket} />
                             </Link>
                         </div>
                     )}
                 </nav>
-                <AppRoutes/>
+                <AppRoutes />
             </div>
         </>
     );
