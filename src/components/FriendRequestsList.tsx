@@ -54,14 +54,14 @@ const FriendRequestsList = () => {
     }, [fetchFriendRequests]);
 
     return (
-        <div className="chat-container">
+        <div className="friends-list-container">
             <h3>Demandes d'ami</h3>
             {friendRequests.length > 0 ? (
                 friendRequests.map((friendRequest) => (
                     <div key={friendRequest.id} style={styles.requestItem}>
-                        <p style={styles.senderId}>{friendRequest.senderId}</p>
+                        <p className="sender-name">{friendRequest.senderId}</p>
                         <button
-                            style={styles.acceptButton}
+                            className="accept-friend-button"
                             onClick={() => acceptFriendRequest(friendRequest.id)}
                         >
                             Accepter
@@ -69,7 +69,7 @@ const FriendRequestsList = () => {
                     </div>
                 ))
             ) : (
-                <p style={styles.noRequests}>Aucune demande d'ami pour le moment.</p>
+                <p className='no-requests'>Aucune demande d'ami pour le moment.</p>
             )}
         </div>
     );
