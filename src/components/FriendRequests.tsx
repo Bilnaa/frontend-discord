@@ -52,14 +52,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     buttonHover: {
         backgroundColor: "#8262b0",
     },
-    errorMessage: {
-        color: "#ff6b6b",
-        fontSize: "0.875rem",
-    },
-    successMessage: {
-        color: "#69db7c",
-        fontSize: "0.875rem",
-    },
 };
 
 const FriendsRequest = () => {
@@ -104,7 +96,7 @@ const FriendsRequest = () => {
             <p className="texte-uuid">
                 Tu peux ajouter des amis grâce à leur identifiant unique (UUID)
             </p>
-            <form onSubmit={handleSubmit(onSubmit)} style={styles.form}>
+            <form onSubmit={handleSubmit(onSubmit)} className="form-friend-requests">
                 <div style={styles.inputGroup}>
                     <label style={styles.label}>UUID de l'ami</label>
                     <input
