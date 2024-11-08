@@ -1,4 +1,4 @@
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import FriendList from "../components/home/FriendList";
 // import { Friends, useFriendsStore } from "../utils/store/useStoreFriends";
 // import { useEffect } from "react";

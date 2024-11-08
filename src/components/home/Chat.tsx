@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import { Friends, useFriendsStore } from "../../utils/store/useStoreFriends";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Message, useMessageStore } from "../../utils/store/useStoreMessages";
+import { useMessageStore } from "../../utils/store/useStoreMessages";
 import useStoreUser from "../../utils/store/useStoreUser";
 import { v4 as uuidv4 } from "uuid";
 
