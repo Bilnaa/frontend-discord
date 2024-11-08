@@ -10,7 +10,8 @@ import {useEffect} from 'react';
 import Toast from './components/Toast';
 import ToastManager from "./components/ToastManager"
 import {Friends, useFriendsStore} from "./utils/store/useStoreFriends";
-import { Message, useMessageStore } from './utils/store/useStoreMessages';
+import { Message, useMessageStore} from './utils/store/useStoreMessages';
+import { toast } from 'react-toastify';
 
 function App() {
     return (
@@ -25,47 +26,48 @@ function AppContent() {
     const url = window.location.href;
     const id = url.split("/").pop();
     const {fetchFriendRequests} = useStoreFriendRequests();
-    const { addMessage } = useMessageStore();
+    const { addMessage} = useMessageStore();
     const { getFriendById, fetchAllFriends } = useFriendsStore();
-
 
     useEffect(() => {
         const eventSource = new EventSource('http://localhost:3000/notifications', {withCredentials: true});
-        const messageEventSource = new EventSource('http://localhost:3000/notifications', {withCredentials: true});
 
         eventSource.addEventListener('message-received', (event) => {
             const data : Message = JSON.parse(event.data);
             const friendMessage : Friends | undefined = getFriendById(data.emitterId);
-            console.log(id, data.emitterId);
-            
-            if (id != data.emitterId) {
-              new Audio(notifSound).play()
-              Toast.notify("Vous avez reçu un nouveau message de " + friendMessage?.username);
+            const messageToast = () => (
+                <div>
+                    <h2>{friendMessage?.username}</h2>
+                    <p style={{textOverflow:"ellipsis", lineClamp:"1", maxWidth:"300px"}}>{data.content}</p>
+                </div>
+            );
+            if (id !== data.emitterId) {
+                new Audio(notifSound).play();
+                toast(messageToast);
             }
-            addMessage(data);
+            addMessage(data, id);
         });
 
         eventSource.addEventListener('friend-request-received', (event) => {
-            new Audio(notifSound).play()
+            new Audio(notifSound).play();
             const data = JSON.parse(event.data);
-            Toast.notify("Vous avez reçu une demande d'ami")
-            fetchFriendRequests()
+            Toast.notify("Vous avez reçu une demande d'ami");
+            fetchFriendRequests();
             console.log('friend-request-received', data);
         });
 
         eventSource.addEventListener('friend-request-accepted', (event) => {
             const data = JSON.parse(event.data);
-            Toast.notify("Votre demande d'ami a été acceptée", {type: "info"})
+            Toast.notify("Votre demande d'ami a été acceptée", {type: "info"});
             fetchAllFriends();
             console.log('friend-request-accepted', data);
         });
 
         return () => {
-            messageEventSource.close();
             eventSource.close();
             console.log('eventSource fermé');
         };
-    }, [fetchFriendRequests, addMessage]);
+    }, [fetchAllFriends,getFriendById,fetchFriendRequests, addMessage, id]);
 
     return (
         <>

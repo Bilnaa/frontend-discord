@@ -9,9 +9,9 @@ export interface Message {
 
 interface useMessage{
     messages: Message[],
-    setMessage : (messages : Message[]) => void
-    clearMessage: () => void
-    addMessage : (message: Message) => void
+    setMessage : (messages : Message[]) => void,
+    clearMessage: () => void,
+    addMessage : (message: Message, emitterId: string |  undefined) => void
   }
   
   export const useMessageStore = create<useMessage>((set) => ({
@@ -26,9 +26,11 @@ interface useMessage{
             messages: []
         }));
     },
-    addMessage(message) {
-        set((state) => ({
-            messages: [...state.messages, message]
-        }));
+    addMessage(message, chatId) {
+        if (message.receiverId === chatId || message.emitterId === chatId) {
+            set((state) => ({
+                messages: [...state.messages, message]
+            }));
+        }
     },
   }))

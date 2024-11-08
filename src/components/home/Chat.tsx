@@ -3,9 +3,9 @@ import { faMessage } from "@fortawesome/free-solid-svg-icons";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { Friends, useFriendsStore } from "../../utils/store/useStoreFriends";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
-import { Message, useMessageStore } from "../../utils/store/useStoreMessages";
+import { useMessageStore } from "../../utils/store/useStoreMessages";
 import useStoreUser from "../../utils/store/useStoreUser";
 import { v4 as uuidv4 } from "uuid";
 
@@ -25,7 +25,6 @@ function makeLinksClickable(text: string) {
 
 function Chat() {
     const { id } = useParams();
-    let rendered = false;
     const { getFriendById } = useFriendsStore();
     const { user } = useStoreUser();
     const { messages, setMessage, clearMessage, addMessage } = useMessageStore();
@@ -33,18 +32,23 @@ function Chat() {
     const [charCount, setCharCount] = useState(0);
     const { handleSubmit, register, reset, watch } = useForm<Input>();
     const messageValue = watch("message", "")
+    const messageEndRef = useRef<HTMLDivElement>(null);
+
+    
+
 
     const onSubmit: SubmitHandler<Input> = (data) => {
+        const idForMessage : string = uuidv4();
         addMessage({
-            id: uuidv4(),
+            id: idForMessage,
             emitterId: user?.id,
             receiverId: id,
             content: data.message,
-        });
+        }, id );
 
         const sendMessage = async () => {
             await axios
-                .post("http://localhost:3000/chat/" + uuidv4() + "/send", {
+                .post("http://localhost:3000/chat/" + idForMessage + "/send", {
                     receiverId: id,
                     content: data.message,
                 }, { withCredentials: true })
@@ -58,6 +62,7 @@ function Chat() {
         sendMessage();
         reset();
         setCharCount(0);
+        
     };
 
     useEffect(() => {
@@ -71,12 +76,16 @@ function Chat() {
                     console.error(error);
                 });
         };
+        fetchMessages();
+    }, [id,clearMessage, setMessage]);
 
-        if (!rendered) {
-            fetchMessages();
-            rendered = true;
+    useEffect(() => {
+        if (messageEndRef.current) {
+            messageEndRef.current.scrollIntoView({ behavior: "smooth" });
+            console.log("scroll");
         }
-    }, [id, messages]);
+    }, [messages]);
+    
     useEffect(() => {
         setCharCount(messageValue.length);
     }, [messageValue]);
@@ -84,33 +93,36 @@ function Chat() {
     return (
         <div className="chat-container">
             <h3>{currentActiveChat?.username}</h3>
-            <ul className="message-zone">
-                {messages.map((message) => {
-                    if (message.emitterId === id) {
-                        return (
-                            <li
-                                style={{ display: "flex", justifyContent: "start" }}
-                                key={message.id}
-                            >
-                                <span style={{ backgroundColor: "rgb(91,75,138,100)" }}>
+            <div className="message-zone" style={{ overflowY: 'scroll' }}>
+                <ul>
+                    {messages.map((message) => {
+                        if (message.emitterId === id) {
+                            return (
+                                <li
+                                    style={{ display: "flex", justifyContent: "start" }}
+                                    key={message.id}
+                                >
+                                    <span style={{ backgroundColor: "rgb(91,75,138,100)" }}>
                                     {makeLinksClickable(message.content)}
-                                </span>
-                            </li>
-                        );
-                    } else {
-                        return (
-                            <li
-                                style={{ display: "flex", justifyContent: "end" }}
-                                key={message.id}
-                            >
-                                <span style={{ backgroundColor: "rgb(91,75,138,100)" }}>
+                                    </span>
+                                </li>
+                            );
+                        } else {
+                            return (
+                                <li
+                                    style={{ display: "flex", justifyContent: "end", paddingRight:"10px" }}
+                                    key={message.id}
+                                >
+                                    <span style={{ backgroundColor: "rgb(120,88,166,100)" }}>
                                     {makeLinksClickable(message.content)}
-                                </span>
-                            </li>
-                        );
-                    }
-                })}
-            </ul>
+                                    </span>
+                                </li>
+                            );
+                        }
+                    })}
+                    <div ref={messageEndRef} />
+                </ul>
+            </div>
             <div className="inputs">
                 <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex" }}>
                     <input
