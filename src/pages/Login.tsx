@@ -44,6 +44,7 @@ const styles: { [key: string]: CSSProperties } = {
         color: 'rgba(255,255,255,0.5)',
         fontSize: '0.9rem',
         fontWeight: '500',
+        alignSelf: 'flex-start',
     },
     input: {
         padding: "1rem",
@@ -66,6 +67,11 @@ const styles: { [key: string]: CSSProperties } = {
         transition: "all 0.3s ease",
         fontWeight: '600',
         marginTop: '1rem',
+    },
+    title: {
+        color: "white",
+        marginBottom: "1rem",
+        textAlign: "center",
     },
     buttonHover: {
         backgroundColor: 'rgb(130,98,176)',
@@ -123,6 +129,7 @@ const Login = () => {
     return (
         <div style={styles.container}>
             <form onSubmit={handleSubmit(onSubmit)} style={styles.form}>
+                <h1 style={styles.title}>Connexion</h1>
                 <div style={styles.inputGroup}>
                     <label style={styles.label}>Nom d'utilisateur</label>
                     <input
