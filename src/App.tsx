@@ -40,7 +40,10 @@ function AppContent() {
             const messageToast = () => (
                 <Link style={{color: "rgb(55,27,88,100)"}} to={`/chat/${friendMessage?.userId}`}>
                     <h2>{friendMessage?.username}</h2>
-                    <p className='notif' style={{maxWidth:"300px", color: "black"}}>{data.content.substring(0,50) + "..."}</p>
+                    {data.content.length > 50 ? 
+                      <p className='notif' style={{maxWidth:"300px", color: "black"}}>{data.content.substring(0,50) + "..."}</p> :
+                      <p className='notif' style={{maxWidth:"300px", color: "black"}}>{data.content.substring(0,50)}</p>
+                    }
                 </Link>
             );
             if (id !== data.emitterId) {
@@ -55,19 +58,16 @@ function AppContent() {
             const data = JSON.parse(event.data);
             Toast.notify("Vous avez reçu une demande d'ami");
             fetchFriendRequests();
-            console.log('friend-request-received', data);
         });
 
         eventSource.addEventListener('friend-request-accepted', (event) => {
             const data = JSON.parse(event.data);
             Toast.notify("Votre demande d'ami a été acceptée", {type: "info"});
             fetchAllFriends();
-            console.log('friend-request-accepted', data);
         });
 
         return () => {
             eventSource.close();
-            console.log('eventSource fermé');
         };
     }, [fetchAllFriends,getFriendById,fetchFriendRequests, addMessage, id]);
 
