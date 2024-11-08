@@ -26,7 +26,7 @@ function AppContent() {
     const url = window.location.href;
     const id = url.split("/").pop();
     const {fetchFriendRequests} = useStoreFriendRequests();
-    const { addMessage } = useMessageStore();
+    const { addMessage, clearMessage } = useMessageStore();
     const { getFriendById, fetchAllFriends } = useFriendsStore();
 
 
@@ -40,7 +40,7 @@ function AppContent() {
             const messageToast = () => (
               <div>
                <h2>{friendMessage?.username}</h2>
-               <p style={{textOverflow:"ellipsis", maxWidth:"300px"}}>{data.content}</p>
+               <p style={{textOverflow:"ellipsis", lineClamp:"1", maxWidth:"300px"}}>{data.content}</p>
               </div>
             )
             
@@ -48,7 +48,7 @@ function AppContent() {
               new Audio(notifSound).play()
               toast(messageToast)
             }
-            addMessage(data);
+            addMessage(data, data.receiverId);
         });
 
         eventSource.addEventListener('friend-request-received', (event) => {

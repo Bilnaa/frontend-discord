@@ -1,3 +1,4 @@
+import axios from "axios";
 import { create } from "zustand";
 
 export interface Message {
@@ -9,9 +10,9 @@ export interface Message {
 
 interface useMessage{
     messages: Message[],
-    setMessage : (messages : Message[]) => void
-    clearMessage: () => void
-    addMessage : (message: Message) => void
+    setMessage : (messages : Message[]) => void,
+    clearMessage: () => void,
+    addMessage : (message: Message, emitterId: string |  undefined) => void
   }
   
   export const useMessageStore = create<useMessage>((set) => ({
@@ -26,9 +27,11 @@ interface useMessage{
             messages: []
         }));
     },
-    addMessage(message) {
+    addMessage(message, emitterId) {
+       if (message.emitterId == emitterId) {
         set((state) => ({
             messages: [...state.messages, message]
         }));
+       }
     },
   }))

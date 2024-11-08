@@ -36,6 +36,7 @@ function Chat() {
     const messageEndRef = useRef<HTMLDivElement>(null);
 
     const fetchMessages = async () => {
+
         await axios.get("http://localhost:3000/messages/" + id, { withCredentials: true })
             .then((response) => {
                 clearMessage();
@@ -54,7 +55,7 @@ function Chat() {
             emitterId: user?.id,
             receiverId: id,
             content: data.message,
-        });
+        }, id );
 
         const sendMessage = async () => {
             await axios
@@ -72,10 +73,10 @@ function Chat() {
         sendMessage();
         reset();
         setCharCount(0);
+        
     };
 
     useEffect(() => {
-        fetchMessages();
         if (!rendered) {
             fetchMessages();
             rendered = true;
