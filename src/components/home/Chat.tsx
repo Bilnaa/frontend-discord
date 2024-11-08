@@ -38,8 +38,6 @@ function Chat() {
 
 
     const onSubmit: SubmitHandler<Input> = (data) => {
-        console.log(data.message);
-        
         const idForMessage : string = uuidv4();
         addMessage({
             id: idForMessage,
