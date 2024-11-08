@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMessage } from "@fortawesome/free-solid-svg-icons";
+import { faMessage, faSyncAlt } from "@fortawesome/free-solid-svg-icons"; // Import refresh icon
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { Friends, useFriendsStore } from "../../utils/store/useStoreFriends";
@@ -27,42 +27,37 @@ function Chat() {
     const { id } = useParams();
     const { getFriendById } = useFriendsStore();
     const { user } = useStoreUser();
-    const { messages, setMessage, clearMessage, addMessage } = useMessageStore();
+    const { messages, failedMessages, setMessage, clearMessage, addMessage, addFailedMessage, retryFailedMessage } = useMessageStore();
     const currentActiveChat: Friends | undefined = getFriendById(id);
     const [charCount, setCharCount] = useState(0);
     const { handleSubmit, register, reset, watch } = useForm<Input>();
     const messageValue = watch("message", "")
     const messageEndRef = useRef<HTMLDivElement>(null);
 
-    
-
-
     const onSubmit: SubmitHandler<Input> = (data) => {
-        const idForMessage : string = uuidv4();
-        addMessage({
+        const idForMessage: string = uuidv4();
+        const newMessage = {
             id: idForMessage,
             emitterId: user?.id,
             receiverId: id,
             content: data.message,
-        }, id );
+        };
+        addMessage(newMessage, id);
 
         const sendMessage = async () => {
-            await axios
-                .post("http://localhost:3000/chat/" + idForMessage + "/send", {
+            try {
+                await axios.post("http://localhost:3000/chat/" + idForMessage + "/send", {
                     receiverId: id,
                     content: data.message,
-                }, { withCredentials: true })
-                .then((response) => {
-                    console.log(response);
-                })
-                .catch((error) => {
-                    console.error(error);
-                });
+                }, { withCredentials: true });
+            } catch (error) {
+                console.error(error);
+                addFailedMessage(newMessage);
+            }
         };
         sendMessage();
         reset();
         setCharCount(0);
-        
     };
 
     useEffect(() => {
@@ -77,7 +72,7 @@ function Chat() {
                 });
         };
         fetchMessages();
-    }, [id,clearMessage, setMessage]);
+    }, [id, clearMessage, setMessage]);
 
     useEffect(() => {
         if (messageEndRef.current) {
@@ -85,7 +80,7 @@ function Chat() {
             console.log("scroll");
         }
     }, [messages]);
-    
+
     useEffect(() => {
         setCharCount(messageValue.length);
     }, [messageValue]);
@@ -96,29 +91,21 @@ function Chat() {
             <div className="message-zone" style={{ overflowY: 'scroll' }}>
                 <ul>
                     {messages.map((message) => {
-                        if (message.emitterId === id) {
-                            return (
-                                <li
-                                    style={{ display: "flex", justifyContent: "start" }}
-                                    key={message.id}
-                                >
-                                    <span style={{ backgroundColor: "rgb(91,75,138,100)" }}>
+                        const isFailedMessage = failedMessages.some((failedMessage) => failedMessage.id === message.id);
+                        const messageStyle = message.emitterId === id ? { display: "flex", justifyContent: "start" } : { display: "flex", justifyContent: "end", paddingRight: "10px" };
+                        const messageBackground = message.emitterId === id ? "rgb(91,75,138,100)" : "rgb(120,88,166,100)";
+                        return (
+                            <li style={messageStyle} key={message.id}>
+                                <span style={{ backgroundColor: messageBackground }}>
                                     {makeLinksClickable(message.content)}
-                                    </span>
-                                </li>
-                            );
-                        } else {
-                            return (
-                                <li
-                                    style={{ display: "flex", justifyContent: "end", paddingRight:"10px" }}
-                                    key={message.id}
-                                >
-                                    <span style={{ backgroundColor: "rgb(120,88,166,100)" }}>
-                                    {makeLinksClickable(message.content)}
-                                    </span>
-                                </li>
-                            );
-                        }
+                                </span>
+                                {isFailedMessage && (
+                                    <button onClick={() => message.id && retryFailedMessage(message.id)} style={{ background: "none", border: "none", cursor: "pointer", marginLeft: "10px" }}>
+                                        <FontAwesomeIcon icon={faSyncAlt} size="lg" />
+                                    </button>
+                                )}
+                            </li>
+                        );
                     })}
                     <div ref={messageEndRef} />
                 </ul>
@@ -145,6 +132,14 @@ function Chat() {
                         <FontAwesomeIcon icon={faMessage}/>
                     </button>
                 </form>
+                {failedMessages.length > 0 && (
+                    <div style={{ display: "flex", alignItems: "center", marginTop: "10px" }}>
+                        <span style={{ color: "red", marginRight: "10px" }}>Échec de l'envoi de certains messages</span>
+                        <button onClick={() => failedMessages.forEach(message => message.id && retryFailedMessage(message.id))} style={{ background: "none", border: "none", cursor: "pointer" }}>
+                            <FontAwesomeIcon icon={faSyncAlt} size="lg" />
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );
