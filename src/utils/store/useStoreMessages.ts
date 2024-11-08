@@ -1,4 +1,3 @@
-import axios from "axios";
 import { create } from "zustand";
 
 export interface Message {
@@ -27,11 +26,11 @@ interface useMessage{
             messages: []
         }));
     },
-    addMessage(message, emitterId) {
-       if (message.emitterId == emitterId) {
-        set((state) => ({
-            messages: [...state.messages, message]
-        }));
-       }
+    addMessage(message, chatId) {
+        if (message.receiverId === chatId || message.emitterId === chatId) {
+            set((state) => ({
+                messages: [...state.messages, message]
+            }));
+        }
     },
   }))

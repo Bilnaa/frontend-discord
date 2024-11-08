@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import { Friends, useFriendsStore } from "../../utils/store/useStoreFriends";
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
-import { Message, useMessageStore } from "../../utils/store/useStoreMessages";
+import { useMessageStore } from "../../utils/store/useStoreMessages";
 import useStoreUser from "../../utils/store/useStoreUser";
 import { v4 as uuidv4 } from "uuid";
 
@@ -25,7 +25,6 @@ function makeLinksClickable(text: string) {
 
 function Chat() {
     const { id } = useParams();
-    let rendered = false;
     const { getFriendById } = useFriendsStore();
     const { user } = useStoreUser();
     const { messages, setMessage, clearMessage, addMessage } = useMessageStore();
@@ -35,17 +34,7 @@ function Chat() {
     const messageValue = watch("message", "")
     const messageEndRef = useRef<HTMLDivElement>(null);
 
-    const fetchMessages = async () => {
-
-        await axios.get("http://localhost:3000/messages/" + id, { withCredentials: true })
-            .then((response) => {
-                clearMessage();
-                setMessage(response.data.slice().reverse());
-            })
-            .catch((error) => {
-                console.error(error);
-            });
-    };
+    
 
 
     const onSubmit: SubmitHandler<Input> = (data) => {
@@ -77,11 +66,18 @@ function Chat() {
     };
 
     useEffect(() => {
-        if (!rendered) {
-            fetchMessages();
-            rendered = true;
-        }
-    }, [id]);
+        const fetchMessages = async () => {
+            await axios.get("http://localhost:3000/messages/" + id, { withCredentials: true })
+                .then((response) => {
+                    clearMessage();
+                    setMessage(response.data.slice().reverse());
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        };
+        fetchMessages();
+    }, [id,clearMessage, setMessage]);
 
     useEffect(() => {
         if (messageEndRef.current) {
