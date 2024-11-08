@@ -36,10 +36,10 @@ function AppContent() {
             const data : Message = JSON.parse(event.data);
             const friendMessage : Friends | undefined = getFriendById(data.emitterId);
             const messageToast = () => (
-                <div>
+                <Link style={{color: "rgb(55,27,88,100)"}} to={`/chat/${friendMessage?.userId}`}>
                     <h2>{friendMessage?.username}</h2>
-                    <p style={{textOverflow:"ellipsis", lineClamp:"1", maxWidth:"300px"}}>{data.content}</p>
-                </div>
+                    <p className='notif' style={{maxWidth:"300px", color: "black"}}>{data.content.substring(0,50) + "..."}</p>
+                </Link>
             );
             if (id !== data.emitterId) {
                 new Audio(notifSound).play();

@@ -128,6 +128,7 @@ function Chat() {
                     <input
                         className="message-bar"
                         autoComplete="off"
+                        required
                         type="text"
                         placeholder="Tap your message here"
                         style={{fontSize: "20px"}}
