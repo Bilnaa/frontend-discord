@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import useStoreFriendRequests from "../utils/store/useStoreFriendRequests";
-import useStoreUser from "../utils/store/useStoreUser";
 
 const styles = {
     container: {
@@ -49,7 +48,6 @@ const styles = {
 
 const FriendRequestsList = () => {
     const { fetchFriendRequests, acceptFriendRequest, friendRequests } = useStoreFriendRequests();
-    const { user } = useStoreUser();
 
     useEffect(() => {
         fetchFriendRequests();
