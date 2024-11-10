@@ -95,16 +95,16 @@ const Login = () => {
     const { login } = useStoreLogin();
     const { setUser, clearUser } = useStoreUser();
 
-    const onSubmit = async (data: FormData) => {
+    const onSubmit = async (data) => {
         setLoading(true);
         setErrorMessage("");
         setSuccessMessage("");
         try {
-            const response = await axios.post("http://localhost:3000/auth/login", data, { withCredentials: true });
+            const response = await axios.post(`${process.env.VITE_API_BASE_URL}/auth/login`, data, { withCredentials: true });
             if (response.status !== 201) {
                 throw new Error("Échec de la connexion");
             }
-            await axios.get("http://localhost:3000/auth/me", { withCredentials: true }).then((response) => {
+            await axios.get(`${process.env.VITE_API_BASE_URL}/auth/me`, { withCredentials: true }).then((response) => {
                 setUser(response.data);
                 login();
                 setSuccessMessage("Connexion réussie !");

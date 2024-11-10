@@ -102,21 +102,11 @@ const SignUp = () => {
     const hasNumber = /\d/.test(password);
     const hasSpecialChar = /[@$!%*?&]/.test(password);
 
-    const onSubmit = async (data: FormData) => {
-        if (data.password !== watch('confirmPassword')) {
-            setPasswordError("Les mots de passes ne sont pas les mêmes.");
-            return;
-        }
-
-        if (!validatePassword(data.password)) {
-            setPasswordError("Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.");
-            return;
-        }
-
+    const onSubmit = async (data) => {
         setPasswordError(null);
 
         try {
-            const response = await axios.post('http://localhost:3000/auth/register', data);
+            const response = await axios.post(`${process.env.VITE_API_BASE_URL}/auth/register`, data);
             if (response.status === 201) {
                 navigate('/login');
             }

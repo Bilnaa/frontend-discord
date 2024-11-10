@@ -11,7 +11,7 @@ import useStoreUser from './store/useStoreUser';
 import axios from 'axios';
 
 const Requestlogout = async () => {
-  await axios.post("http://localhost:3000/auth/logout", { withCredentials: true })
+  await axios.post(`${process.env.VITE_API_BASE_URL}/auth/logout`, { withCredentials: true })
     .then((response) => {
       console.log(response);
     })

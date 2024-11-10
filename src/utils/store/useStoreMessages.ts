@@ -68,7 +68,7 @@ export const useMessageStore = create<useMessage>((set) => ({
         set((state) => {
             const message = state.failedMessages.find((msg) => msg.id === messageId);
             if (message) {
-                axios.post(`http://localhost:3000/chat/${message.id}/send`, {
+                axios.post(`${process.env.VITE_API_BASE_URL}/chat/${message.id}/send`, {
                     receiverId: message.receiverId,
                     content: message.content,
                 }, { withCredentials: true })
