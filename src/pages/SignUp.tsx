@@ -5,6 +5,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 
+type UserLogin = {
+    username: string;
+    password: string;
+};
+
 type FormData = {
     username: string;
     password: string;
@@ -81,17 +86,12 @@ const styles: { [key: string]: CSSProperties } = {
 };
 
 const SignUp = () => {
-    const { register, handleSubmit, watch, formState: { errors } } = useForm<FormData>();
+    const { register, handleSubmit, formState: { errors } } = useForm<FormData>();
     const [passwordError, setPasswordError] = useState<string | null>(null);
     const [password, setPassword] = useState<string>(''); // Ajout de l'état pour le mot de passe
     const [showCriteria, setShowCriteria] = useState<boolean>(true); // Ajout de l'état pour afficher les critères
     const navigate = useNavigate();
-
-    const validatePassword = (password: string) => {
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-        return passwordRegex.test(password);
-    };
-
+    
     const handlePasswordChange = (password: string) => {
         setPassword(password);
     };
@@ -102,7 +102,7 @@ const SignUp = () => {
     const hasNumber = /\d/.test(password);
     const hasSpecialChar = /[@$!%*?&]/.test(password);
 
-    const onSubmit = async (data) => {
+    const onSubmit = async (data : UserLogin) => {
         setPasswordError(null);
 
         try {
@@ -114,7 +114,7 @@ const SignUp = () => {
             console.error(error);
             const AxiosError = error as AxiosError;
             if (AxiosError.response?.status === 409) {
-                setPasswordError("Cet utilisateur existe déjà, veuillez en choisir un autre.");
+                setPasswordError("Ce nom d'utilisateur est déjà utilisé, veuillez en choisir un autre.");
             } else {
                 setPasswordError("Une erreur est survenue.");
             }

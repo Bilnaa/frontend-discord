@@ -6,6 +6,10 @@ import useStoreLogin from "../utils/store/useStoreLogin";
 import {Link, useNavigate } from 'react-router-dom';
 import useStoreUser from "../utils/store/useStoreUser";
 
+type UserLogin = {
+    username: string;
+    password: string;
+};
 
 type FormData = {
     username: string; 
@@ -95,7 +99,7 @@ const Login = () => {
     const { login } = useStoreLogin();
     const { setUser, clearUser } = useStoreUser();
 
-    const onSubmit = async (data) => {
+    const onSubmit = async (data : UserLogin) => {
         setLoading(true);
         setErrorMessage("");
         setSuccessMessage("");
