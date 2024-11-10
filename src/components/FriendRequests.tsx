@@ -4,6 +4,7 @@ import {v4 as uuidv4} from "uuid";
 import {toast} from 'react-toastify';
 import {useFriendsStore} from "../utils/store/useStoreFriends"
 import {useEffect} from "react";
+import Toast from "./Toast";
 
 
 type FriendRequests = {
@@ -85,7 +86,7 @@ const FriendsRequest = () => {
             toast("Votre demande d'ami a bien été envoyée");
 
         } catch (error) {
-            toast("Erreur lors de la demande d'ami");
+            Toast.notify("Erreur lors de l'envoi de la demande d'ami" + error, {type: "error"});
         }
     };
 

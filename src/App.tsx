@@ -56,6 +56,7 @@ function AppContent() {
         eventSource.addEventListener('friend-request-received', (event) => {
             new Audio(notifSound).play();
             const data = JSON.parse(event.data);
+            console.log(data);
             Toast.notify("Vous avez reçu une demande d'ami");
             fetchFriendRequests();
         });
@@ -63,6 +64,7 @@ function AppContent() {
         eventSource.addEventListener('friend-request-accepted', (event) => {
             const data = JSON.parse(event.data);
             Toast.notify("Votre demande d'ami a été acceptée", {type: "info"});
+            console.log(data);
             fetchAllFriends();
         });
 
@@ -72,7 +74,7 @@ function AppContent() {
     }, [fetchAllFriends,getFriendById,fetchFriendRequests, addMessage, id]);
 
     function copyMyIdToClipboard() {
-      navigator.clipboard.writeText(user?.id);
+      navigator.clipboard.writeText(user!.id);
       Toast.notify("Identifiant copié", {type: "info"});
     }
 
