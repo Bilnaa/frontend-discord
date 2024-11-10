@@ -1,50 +1,72 @@
-# React + TypeScript + Vite
+# Discord Remake
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Ce projet est une application web de messagerie instantanée inspirée de Discord, développée avec React, TypeScript et Vite. L'application permet aux utilisateurs de s'inscrire, se connecter, envoyer des messages, et gérer des demandes d'amis.
 
-Currently, two official plugins are available:
+## Fonctionnalités
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Inscription et Connexion** : Les utilisateurs peuvent créer un compte et se connecter.
+- **Envoi de Messages** : Les utilisateurs peuvent envoyer des messages à leurs amis.
+- **Gestion des Demandes d'Amis** : Les utilisateurs peuvent envoyer et accepter des demandes d'amis.
+- **Notifications** : Les utilisateurs reçoivent des notifications pour les nouveaux messages et les demandes d'amis.
 
-## Expanding the ESLint configuration
+## Technologies Utilisées
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- **React** : Bibliothèque JavaScript pour construire des interfaces utilisateur.
+- **TypeScript** : Superset de JavaScript qui ajoute des types statiques.
+- **Vite** : Outil de build rapide pour les projets front-end.
+- **Zustand** : Bibliothèque de gestion d'état pour React.
+- **React Hook Form** : Bibliothèque pour gérer les formulaires dans React.
+- **Axios** : Client HTTP pour effectuer des requêtes vers l'API.
+- **React Router** : Bibliothèque pour la gestion des routes dans une application React.
+- **React Toastify** : Bibliothèque pour afficher des notifications toast.
 
-- Configure the top-level `parserOptions` property like this:
+## Installation
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+1.Clonez le dépôt :
+
+```bash
+git clone https://github.com/votre-utilisateur/frontend-discord.git
+cd frontend-discord
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+2.Installez les dépendances :
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```bash
+npm install
 ```
+
+3.Créez un fichier `.env` à la racine du projet et ajoutez l'URL de votre API :
+
+```env
+VITE_API_BASE_URL=http://localhost:3000
+```
+
+4.Lancez l'application en mode développement :
+
+```bash
+  npm run dev
+```
+
+## Scripts Disponibles
+
+- `npm run dev` : Lance l'application en mode développement.
+- `npm run build` : Construit l'application pour la production.
+- `npm run lint` : Lint le code source.
+- `npm run preview` : Prévisualise l'application construite.
+
+## Structure du Projet
+
+- `src/` : Contient le code source de l'application.
+  - `components/` : Composants React réutilisables.
+  - `pages/` : Pages de l'application.
+  - `utils/` : Fonctions utilitaires et hooks personnalisés.
+  - `App.tsx` : Composant principal de l'application.
+  - `index.tsx` : Point d'entrée de l'application.
+
+## Configuration TypeScript
+
+Le projet utilise une configuration TypeScript stricte pour garantir la qualité du code. Les options de compilation sont définies dans `tsconfig.app.json`.
+
+## Contribution
+
+Les contributions sont les bienvenues ! Veuillez ouvrir une issue ou soumettre une pull request pour toute amélioration ou correction de bug.
