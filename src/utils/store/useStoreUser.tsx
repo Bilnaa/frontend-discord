@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface User {
     id: string;
@@ -11,20 +12,17 @@ interface UserState {
     clearUser: () => void;
 }
 
-const useStoreUser = create<UserState>((set) => {
-    const user = localStorage.getItem("user");
-    return {
-        id: 0,
-        user: user ? JSON.parse(user) : null,
-        setUser: (user) => {
-            localStorage.setItem("user", JSON.stringify(user));
-            set({ user });
-        },
-        clearUser: () => {
-            localStorage.removeItem("user");
-            set({ user: null });
+const useStoreUser = create(
+    persist<UserState>(
+        (set) => ({
+            user: null,
+            setUser: (user) => set({ user }),
+            clearUser: () => set({ user: null }),
+        }),
+        {
+            name: "user-storage",
         }
-    };
-});
+    )
+);
 
 export default useStoreUser;
