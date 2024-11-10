@@ -18,7 +18,7 @@ const useStoreFriendRequests = create<FriendRequestsState>((set) => ({
 
     fetchFriendRequests: async () => {
         try {
-            const response = await axios.get("http://localhost:3000/social/friend-requests/", {
+            const response = await axios.get(`${process.env.VITE_API_BASE_URL}/social/friend-requests/`, {
                 withCredentials: true,
             });
             set({ friendRequests: response.data });
@@ -30,7 +30,7 @@ const useStoreFriendRequests = create<FriendRequestsState>((set) => ({
 
     acceptFriendRequest: async (requestId) => {
         try {
-            await axios.post(`http://localhost:3000/social/friend-request/${requestId}/accept`, {}, {
+            await axios.post(`${process.env.VITE_API_BASE_URL}/social/friend-request/${requestId}/accept`, {}, {
                 withCredentials: true,
             });
             set((state) => ({
